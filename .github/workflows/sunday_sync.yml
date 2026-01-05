@@ -1,0 +1,38 @@
+name: Sunday Sync Reminder
+
+on:
+  schedule:
+    # Runs at 09:00 UTC every Sunday
+    - cron: '0 9 * * 0'
+  workflow_dispatch: # Allows you to run it manually to test
+
+jobs:
+  create-sync-issue:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Create Sunday Sync Issue
+        uses: imjohnbo/issue-bot@v3
+        with:
+          title: "🔄 Sunday Sync: Review Goals & Wins"
+          body: |
+            ### It's time for the Power Couple Sync! 
+            
+            Please open the [Resolution Tracker](https://github.com/${{ github.repository }}) and discuss:
+            
+            **1. 🏆 Wins of the Week**
+            * What went well?
+            * Did we hit the gym 3x?
+            
+            **2. ⚠️ Friction Points**
+            * What stopped us from hitting targets?
+            * How can we fix it for next week?
+            
+            **3. 🎯 Goals for Next Week**
+            * Set the intentions.
+            
+            ---
+            *Check off this issue when the meeting is done!*
+          token: ${{ secrets.GITHUB_TOKEN }}
