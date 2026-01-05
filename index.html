@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 Power Couple Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Helvetica Neue', sans-serif; background-color: #f8fafc; }
+        .tab-active { border-bottom: 2px solid #000; font-weight: bold; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold tracking-tight">2026 Power Couple 🚀</h1>
+                </div>
+                <div class="flex space-x-8 items-center overflow-x-auto">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Dashboard 📊</button>
+                    <button onclick="switchTab('physical')" id="nav-physical" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Physical 💪</button>
+                    <button onclick="switchTab('financial')" id="nav-financial" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Financial 💰</button>
+                    <button onclick="switchTab('mental')" id="nav-mental" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Mental 🧠</button>
+                    <button onclick="switchTab('academic')" id="nav-academic" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Academic 🎓</button>
+                    <button onclick="switchTab('career')" id="nav-career" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Career 💼</button>
+                    <button onclick="switchTab('relationship')" id="nav-relationship" class="tab-btn hover:text-gray-600 px-3 py-2 text-sm font-medium">Relationship ❤️</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8" id="app-content">
+        </main>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        // Using LocalStorage to save data across sessions
+        const defaultData = {
+            physical: { weightA: [], weightB: [], gym: 0, yoga: 0, foodLog: "" },
+            financial: { savingsGoal: 3000, currentSavings: 0, debt: 0, incomeLog: "" },
+            mental: { mindfulness: 0, journal: "" },
+            academic: { grades: [] },
+            career: { followers: 0, posts: 0, internships: [] },
+            relationship: { dates: [], gifts: [] }
+        };
+
+        let data = JSON.parse(localStorage.getItem('powerCoupleData')) || defaultData;
+
+        function saveData() {
+            localStorage.setItem('powerCoupleData', JSON.stringify(data));
+            renderCurrentTab();
+        }
+
+        let currentTab = 'dashboard';
+
+        // --- RENDER FUNCTIONS ---
+        
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
+            document.getElementById(`nav-${tab}`).classList.add('tab-active');
+            renderCurrentTab();
+        }
+
+        function renderCurrentTab() {
+            const container = document.getElementById('app-content');
+            container.innerHTML = ''; // Clear current content
+
+            if (currentTab === 'dashboard') renderDashboard(container);
+            if (currentTab === 'physical') renderPhysical(container);
+            if (currentTab === 'financial') renderFinancial(container);
+            if (currentTab === 'mental') renderMental(container);
+            if (currentTab === 'academic') renderAcademic(container);
+            if (currentTab === 'career') renderCareer(container);
+            if (currentTab === 'relationship') renderRelationship(container);
+        }
+
+        // 1. DASHBOARD VIEW
+        function renderDashboard(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card bg-blue-50">
+                        <h3 class="font-bold text-lg mb-2">Social Media Growth</h3>
+                        <p class="text-3xl font-bold">${data.career.followers} / 5000</p>
+                        <p class="text-sm text-gray-600">Followers Goal</p>
+                    </div>
+                    <div class="card bg-green-50">
+                        <h3 class="font-bold text-lg mb-2">Savings Pot</h3>
+                        <p class="text-3xl font-bold">£${data.financial.currentSavings}</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                            <div class="bg-green-600 h-2.5 rounded-full" style="width: ${(data.financial.currentSavings / data.financial.savingsGoal) * 100}%"></div>
+                        </div>
+                        <p class="text-xs mt-1 text-gray-500">Goal: £${data.financial.savingsGoal} (Combined)</p>
+                    </div>
+                     <div class="card bg-pink-50">
+                        <h3 class="font-bold text-lg mb-2">Relationship Bank</h3>
+                        <p class="text-3xl font-bold">${data.relationship.dates.length}</p>
+                        <p class="text-sm text-gray-600">Dates Completed</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h2 class="text-2xl font-bold mb-4">Quick Links ⚡</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="switchTab('career')" class="p-4 border rounded hover:bg-gray-50 text-left">📝 Track Social Post</button>
+                        <button onclick="switchTab('physical')" class="p-4 border rounded hover:bg-gray-50 text-left">🥗 Log Meal</button>
+                        <button onclick="switchTab('mental')" class="p-4 border rounded hover:bg-gray-50 text-left">🧘‍♀️ Log Mindfulness</button>
+                        <button onclick="switchTab('academic')" class="p-4 border rounded hover:bg-gray-50 text-left">📚 Add Grade</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2. PHYSICAL VIEW
+        function renderPhysical(container) {
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Physical Goals 💪</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Habit Tracker (Weekly)</h3>
+                        <div class="flex justify-between items-center mb-2">
+                            <span>Gym Sessions (Goal: 3)</span>
+                            <div class="flex gap-2">
+                                <button onclick="data.physical.gym++; saveData()" class="px-3 py-1 bg-gray-200 rounded">+</button>
+                                <span class="font-bold text-xl">${data.physical.gym}</span>
+                                <button onclick="data.physical.gym > 0 ? data.physical.gym-- : null; saveData()" class="px-3 py-1 bg-gray-200 rounded">-</button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Yoga Sessions (Goal: 1)</span>
+                            <div class="flex gap-2">
+                                <button onclick="data.physical.yoga++; saveData()" class="px-3 py-1 bg-gray-200 rounded">+</button>
+                                <span class="font-bold text-xl">${data.physical.yoga}</span>
+                                <button onclick="data.physical.yoga > 0 ? data.physical.yoga-- : null; saveData()" class="px-3 py-1 bg-gray-200 rounded">-</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Weight Tracker (kg)</h3>
+                        <div class="space-y-2">
+                            <input type="number" id="weightA" placeholder="Partner A Current Weight" class="border p-2 w-full rounded">
+                            <input type="number" id="weightB" placeholder="Partner B Current Weight" class="border p-2 w-full rounded">
+                            <button onclick="logWeight()" class="bg-black text-white px-4 py-2 rounded w-full">Log Weights</button>
+                        </div>
+                        <div class="mt-4 text-sm text-gray-500">
+                            Last Entry A: ${data.physical.weightA.slice(-1)} <br>
+                            Last Entry B: ${data.physical.weightB.slice(-1)}
+                        </div>
+                    </div>
+                    
+                    <div class="card md:col-span-2">
+                        <h3 class="font-bold mb-2">Food Diary 🍎</h3>
+                        <textarea id="foodInput" class="w-full border p-2 rounded h-24" placeholder="What did we eat today?"></textarea>
+                        <button onclick="data.physical.foodLog += '\n' + new Date().toLocaleDateString() + ': ' + document.getElementById('foodInput').value; saveData()" class="mt-2 bg-green-600 text-white px-4 py-2 rounded">Save Log</button>
+                        <pre class="mt-4 bg-gray-100 p-4 rounded text-xs h-32 overflow-y-scroll">${data.physical.foodLog}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        function logWeight() {
+            const wa = document.getElementById('weightA').value;
+            const wb = document.getElementById('weightB').value;
+            if(wa) data.physical.weightA.push({date: new Date().toLocaleDateString(), weight: wa});
+            if(wb) data.physical.weightB.push({date: new Date().toLocaleDateString(), weight: wb});
+            saveData();
+        }
+
+        // 3. FINANCIAL VIEW
+        function renderFinancial(container) {
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Financial Goals 💸</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Savings Tracker (Goal: £3000)</h3>
+                        <p class="text-4xl font-bold text-green-600 mb-4">£${data.financial.currentSavings}</p>
+                        <div class="flex gap-2">
+                            <input type="number" id="saveAmt" placeholder="Amount to add" class="border p-2 rounded w-full">
+                            <button onclick="data.financial.currentSavings += parseInt(document.getElementById('saveAmt').value); saveData()" class="bg-green-600 text-white px-4 py-2 rounded">Deposit</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Debt Clearance</h3>
+                        <p class="text-4xl font-bold text-red-500 mb-4">£${data.financial.debt}</p>
+                        <div class="flex gap-2">
+                            <input type="number" id="debtAmt" placeholder="Update total debt" class="border p-2 rounded w-full">
+                            <button onclick="data.financial.debt = parseInt(document.getElementById('debtAmt').value); saveData()" class="bg-red-500 text-white px-4 py-2 rounded">Update</button>
+                        </div>
+                    </div>
+                    <div class="card md:col-span-2">
+                         <h3 class="font-bold mb-2">Passive Income / Earnings Log</h3>
+                         <textarea id="incInput" class="w-full border p-2 rounded h-24" placeholder="Source: Amount"></textarea>
+                         <button onclick="data.financial.incomeLog += '\n' + new Date().toLocaleDateString() + ': ' + document.getElementById('incInput').value; saveData()" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded">Log Income</button>
+                         <pre class="mt-4 bg-gray-100 p-4 rounded text-xs h-32 overflow-y-scroll">${data.financial.incomeLog}</pre>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 4. MENTAL VIEW
+        function renderMental(container) {
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Mental & Self Growth 🧘</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Mindfulness Meetings</h3>
+                        <p class="mb-4">Sessions completed: <span class="font-bold">${data.mental.mindfulness}</span></p>
+                        <button onclick="data.mental.mindfulness++; saveData()" class="bg-purple-500 text-white px-6 py-3 rounded w-full">✅ Log Session</button>
+                    </div>
+                    <div class="card md:col-span-2">
+                        <h3 class="font-bold mb-2">Journal & Reconnection Log</h3>
+                        <textarea id="journalInput" class="w-full border p-2 rounded h-32" placeholder="How are we feeling? What did we learn about ourselves?"></textarea>
+                        <button onclick="data.mental.journal += '\n' + new Date().toLocaleDateString() + ': ' + document.getElementById('journalInput').value; saveData()" class="mt-2 bg-purple-600 text-white px-4 py-2 rounded">Save Entry</button>
+                        <div class="mt-4 bg-white border p-4 rounded h-48 overflow-y-scroll whitespace-pre-wrap">${data.mental.journal}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. ACADEMIC VIEW
+        function renderAcademic(container) {
+            let rows = data.academic.grades.map(g => `
+                <tr class="border-b">
+                    <td class="py-2">${g.module}</td>
+                    <td class="py-2 font-bold">${g.grade}</td>
+                    <td class="py-2 text-gray-500 text-sm">${g.type}</td>
+                </tr>
+            `).join('');
+
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Academic Excellence 🎓</h2>
+                <div class="card">
+                    <h3 class="font-bold mb-4">Grade Log (Goal: First Class)</h3>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="module" placeholder="Module Name" class="border p-2 rounded w-1/3">
+                        <input type="text" id="grade" placeholder="Grade/Score" class="border p-2 rounded w-1/3">
+                        <select id="type" class="border p-2 rounded w-1/3">
+                            <option>Exam</option>
+                            <option>Coursework</option>
+                        </select>
+                        <button onclick="addGrade()" class="bg-black text-white px-4 rounded">Add</button>
+                    </div>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-gray-500 text-sm border-b">
+                                <th class="pb-2">Module</th>
+                                <th class="pb-2">Grade</th>
+                                <th class="pb-2">Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function addGrade() {
+            const m = document.getElementById('module').value;
+            const g = document.getElementById('grade').value;
+            const t = document.getElementById('type').value;
+            if(m && g) {
+                data.academic.grades.push({module: m, grade: g, type: t});
+                saveData();
+            }
+        }
+
+        // 6. CAREER VIEW
+        function renderCareer(container) {
+            let internshipRows = data.career.internships.map(i => `<li class="py-1 border-b flex justify-between"><span>${i.company}</span> <span class="text-xs bg-gray-100 p-1 rounded">${i.status}</span></li>`).join('');
+
+            container.innerHTML = `
+                <h2 class="text-3xl font-bold mb-6">Career & Content 💼</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Social Media Growth</h3>
+                        <div class="mb-4">
+                            <label class="block text-sm text-gray-600">Followers (Goal 5k)</label>
+                            <input type="number" value="${data.career.followers}" onchange="data.career.followers = this.value; saveData()" class="border p-2 w-full rounded text-lg font-bold">
+                        </div>
+                         <div class="mb-4">
+                            <label class="block text-sm text-gray-600">Weekly Posts (Goal: 3)</label>
+                            <div class="flex items-center gap-4 mt-2">
+                                <button onclick="data.career.posts++; saveData()" class="bg-blue-600 text-white px-3 py-1 rounded">+</button>
+                                <span class="text-2xl font-bold">${data.career.posts}</span>
+                                <span class="text-sm text-gray-500">posts this week</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Application Tracker</h3>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="company" placeholder="Company / Firm" class="border p-2 w-full rounded">
+                            <select id="status" class="border p-2 rounded">
+                                <option>Applied</option>
+                                <option>Interview</option>
+                                <option>Offer</option>
+                            </select>
+                            <button onclick="addInternship()" class="bg-black text-white px-4 rounded">Add</button>
+                        </div>
+                        <ul class="mt-4 max-h-40 overflow-y-auto">
+                            ${internshipRows}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addInternship() {
+            const c = document.getElementById('company').value;
+            const s = document.getElementById('status').value;
+            if(c) {
+                data.career.internships.push({company: c, status: s});
+                saveData();
+            }
+        }
+
+        // 7. RELATIONSHIP VIEW
+        function renderRelationship(container) {
+            let dateRows = data.relationship.dates.map(d => `<li class="py-2 border-b">💕 ${d.desc} <span class="text-xs text-gray-500 float-right">${d.type}</span></li>`).join('');
+            
+            container.innerHTML = `
+                 <h2 class="text-3xl font-bold mb-6">Relationship Growth ❤️</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Date Log</h3>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="dateDesc" placeholder="What did we do?" class="border p-2 w-full rounded">
+                            <select id="dateType" class="border p-2 rounded">
+                                <option>Dinner</option>
+                                <option>Activity</option>
+                                <option>Chill</option>
+                            </select>
+                            <button onclick="addDate()" class="bg-pink-500 text-white px-4 rounded">Log</button>
+                        </div>
+                        <ul class="max-h-60 overflow-y-auto">
+                            ${dateRows}
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-bold mb-4">Gift Ideas 🎁</h3>
+                        <textarea id="giftInput" class="w-full border p-2 rounded h-24" placeholder="Ideas for each other..."></textarea>
+                        <button onclick="data.relationship.gifts.push(document.getElementById('giftInput').value); saveData(); document.getElementById('giftInput').value=''" class="mt-2 bg-gray-800 text-white px-4 py-2 rounded">Add Idea</button>
+                        <ul class="mt-4 list-disc pl-5">
+                            ${data.relationship.gifts.map(g => `<li>${g}</li>`).join('')}
+                        </ul>
+                    </div>
+                 </div>
+            `;
+        }
+
+        function addDate() {
+            const d = document.getElementById('dateDesc').value;
+            const t = document.getElementById('dateType').value;
+            if(d) {
+                data.relationship.dates.push({desc: d, type: t});
+                saveData();
+            }
+        }
+
+        // Initialize
+        switchTab('dashboard');
+        document.getElementById('nav-dashboard').classList.add('tab-active');
+
+    </script>
+</body>
+</html>
